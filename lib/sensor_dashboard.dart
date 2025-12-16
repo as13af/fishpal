@@ -23,13 +23,45 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
+    const Color primaryBlue = Color(0xFF1E3A8A);
+    const Color iotGreen = Color(0xFF10B981);
+    const Color sensorOrange = Color(0xFFF59E0B);
+    const Color cloudWhite = Color(0xFFF8FAFC);
+    const Color textPrimary = Color(0xFF0F172A);
+    const Color textSecondary = Color(0xFF64748B);
+
+    final theme = ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: primaryBlue,
+        primary: primaryBlue,
+        secondary: iotGreen,
+        surface: cloudWhite,
+        onPrimary: Colors.white,
+        onSurface: textPrimary,
+      ),
+      scaffoldBackgroundColor: cloudWhite,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: primaryBlue,
+        foregroundColor: Colors.white,
+        elevation: 2,
+      ),
+      textTheme: const TextTheme(
+        bodyLarge: TextStyle(color: textPrimary),
+        bodyMedium: TextStyle(color: textPrimary),
+        labelMedium: TextStyle(color: textSecondary),
+      ),
+      switchTheme: const SwitchThemeData(
+        thumbColor: WidgetStatePropertyAll(iotGreen),
+        trackColor: WidgetStatePropertyAll(Color(0x3310B981)),
+      ),
+      // Card theming inherits defaults; explicit colors applied per widget
+    );
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Smart Aquarium',
-      theme: ThemeData(
-        primarySwatch: Colors.teal,
-        scaffoldBackgroundColor: Colors.grey[100],
-      ),
+      theme: theme,
       home: const SensorDashboard(),
     );
   }
@@ -119,12 +151,11 @@ class _SensorDashboardState extends State<SensorDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.teal,
         title: const Text('Smart Aquarium'),
         actions: [
           Icon(
             wifiStatus == "Connected" ? Icons.wifi : Icons.wifi_off,
-            color: wifiStatus == "Connected" ? Colors.white : Colors.redAccent,
+            color: wifiStatus == "Connected" ? Color(0xFF10B981) : Color(0xFFF59E0B),
           ),
           const SizedBox(width: 12),
         ],
@@ -177,18 +208,18 @@ class _SensorDashboardState extends State<SensorDashboard> {
       ),
       child: Column(
         children: [
-          Text("Water Level",
+          const Text("Water Level",
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.teal[800])),
+                  color: Color(0xFF0F172A))),
           const SizedBox(height: 20),
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: LiquidLinearProgressIndicator(
               value: (waterLevel / 100).clamp(0.0, 1.0),
-              valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
-              backgroundColor: Colors.grey[200]!,
+              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF10B981)),
+              backgroundColor: const Color(0xFFF8FAFC),
               direction: Axis.horizontal,
               center: Text("${waterLevel.toStringAsFixed(1)} %",
                   style: const TextStyle(
@@ -212,13 +243,13 @@ class _SensorDashboardState extends State<SensorDashboard> {
       childAspectRatio: 1,
       children: [
         _buildSensorCard(Icons.science, "pH",
-            ph.toStringAsFixed(2), Colors.blueAccent),
+          ph.toStringAsFixed(2), const Color(0xFF1E3A8A)),
         _buildSensorCard(Icons.opacity, "Turbidity",
-            turbidity.toStringAsFixed(1), Colors.indigo),
+          turbidity.toStringAsFixed(1), const Color(0xFF1E3A8A)),
         _buildSensorCard(Icons.thermostat, "Temperature",
-            "${temperature.toStringAsFixed(1)} °C", Colors.orange),
+          "${temperature.toStringAsFixed(1)} °C", const Color(0xFFF59E0B)),
         _buildSensorCard(Icons.rotate_right, "Servo Angle",
-            "$servoAngle°", Colors.purple),
+          "$servoAngle°", const Color(0xFF10B981)),
       ],
     );
   }
@@ -239,16 +270,16 @@ class _SensorDashboardState extends State<SensorDashboard> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircleAvatar(
-              backgroundColor: color.withOpacity(0.15),
+              backgroundColor: color.withValues(alpha: 0.15),
               radius: 28,
               child: Icon(icon, size: 30, color: color),
             ),
             const SizedBox(height: 14),
             Text(title,
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey[800])),
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF0F172A))),
             const SizedBox(height: 8),
             Text(value,
                 style: TextStyle(
@@ -285,21 +316,20 @@ class _SensorDashboardState extends State<SensorDashboard> {
           Row(
             children: [
               CircleAvatar(
-                backgroundColor: color.withOpacity(0.15),
+                backgroundColor: color.withValues(alpha: 0.15),
                 radius: 28,
                 child: Icon(icon, size: 30, color: color),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: Text(title,
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey[800])),
+                        color: Color(0xFF0F172A))),
               ),
               Switch(
                 value: isActive,
-                activeColor: color,
                 onChanged: onToggle,
               ),
             ],
@@ -307,7 +337,7 @@ class _SensorDashboardState extends State<SensorDashboard> {
           const SizedBox(height: 8),
           Text(isActive ? activeText : inactiveText,
               style: TextStyle(
-                  color: isActive ? color : Colors.grey[600],
+                  color: isActive ? const Color(0xFF10B981) : const Color(0xFF64748B),
                   fontWeight: FontWeight.w600)),
         ],
       ),
@@ -331,9 +361,9 @@ class _SensorDashboardState extends State<SensorDashboard> {
           Row(
             children: [
               CircleAvatar(
-                backgroundColor: Colors.red.withOpacity(0.12),
+                backgroundColor: const Color(0xFF1E3A8A).withValues(alpha: 0.12),
                 radius: 28,
-                child: const Icon(Icons.videocam, size: 30, color: Colors.red),
+                child: const Icon(Icons.videocam, size: 30, color: Color(0xFF1E3A8A)),
               ),
               const SizedBox(width: 16),
               const Expanded(
@@ -380,7 +410,7 @@ class _SensorDashboardState extends State<SensorDashboard> {
                     ? streamError
                     : "Menunggu URL dari Firebase"),
             style: TextStyle(
-              color: streamUrl.isNotEmpty ? Colors.teal : Colors.grey[700],
+              color: streamUrl.isNotEmpty ? const Color(0xFF10B981) : const Color(0xFF64748B),
             ),
           ),
         ],

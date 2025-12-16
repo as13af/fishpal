@@ -37,7 +37,11 @@ class _LoginPageState extends State<LoginPage> {
 					children: [
 						const Text(
 							'Smart Aquarium',
-							style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+							style: TextStyle(
+								fontSize: 24,
+								fontWeight: FontWeight.bold,
+								color: Color(0xFF0F172A),
+							),
 						),
 						const SizedBox(height: 24),
 						TextField(
@@ -62,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
 						if (error != null)
 							Text(
 								error!,
-								style: const TextStyle(color: Colors.red),
+								style: const TextStyle(color: Color(0xFFF59E0B)),
 							),
 						const Spacer(),
 						SizedBox(
