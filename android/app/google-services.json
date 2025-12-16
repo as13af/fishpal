@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "893875377271",
+    "firebase_url": "https://fishpal-57e60-default-rtdb.firebaseio.com",
+    "project_id": "fishpal-57e60",
+    "storage_bucket": "fishpal-57e60.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:893875377271:android:b12593141c38bbb35c6272",
+        "android_client_info": {
+          "package_name": "com.example.myfishpal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLO2ehrDA3TWjoqx-EhyK21ENT0IL0u30"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
