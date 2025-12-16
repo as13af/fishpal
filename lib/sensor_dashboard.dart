@@ -54,6 +54,8 @@ class _SensorDashboardState extends State<SensorDashboard> {
   double temperature = 0.0;
   double waterLevel = 0.0;
   String wifiStatus = "Disconnected";
+  String streamUrl = ""; // ESP32-CAM stream URL from Firebase
+  String streamError = "";
 
   // --- Status kontrol ---
   int servoState = 0;
@@ -90,6 +92,10 @@ class _SensorDashboardState extends State<SensorDashboard> {
           servoState = int.tryParse(c['servo_state']?.toString() ?? '') ?? 0;
           servoAngle = int.tryParse(c['servo_angle']?.toString() ?? '') ?? 0;
           pumpState = int.tryParse(c['pump_state']?.toString() ?? '') ?? 0;
+          streamUrl = c['esp32_cam_url']?.toString() ?? streamUrl;
+          streamError = c['esp32_cam_url'] == null
+              ? "Stream URL not set in Firebase"
+              : "";
         });
       }
     });
@@ -150,6 +156,8 @@ class _SensorDashboardState extends State<SensorDashboard> {
               activeText: "Sedang memberi nutrisi",
               inactiveText: "Tidak memberi nutrisi",
             ),
+            const SizedBox(height: 20),
+            _buildStreamCard(context),
           ],
         ),
       ),
@@ -302,6 +310,102 @@ class _SensorDashboardState extends State<SensorDashboard> {
                   color: isActive ? color : Colors.grey[600],
                   fontWeight: FontWeight.w600)),
         ],
+      ),
+    );
+  }
+
+  Widget _buildStreamCard(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: Colors.red.withOpacity(0.12),
+                radius: 28,
+                child: const Icon(Icons.videocam, size: 30, color: Colors.red),
+              ),
+              const SizedBox(width: 16),
+              const Expanded(
+                child: Text(
+                  "Live Stream",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.play_arrow),
+                label: const Text("Lihat"),
+                onPressed: () {
+                  if (streamUrl.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          streamError.isNotEmpty
+                              ? streamError
+                              : "Stream URL belum tersedia",
+                        ),
+                      ),
+                    );
+                    return;
+                  }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CameraStreamPage(streamUrl: streamUrl),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            streamUrl.isNotEmpty
+                ? "URL: $streamUrl"
+                : (streamError.isNotEmpty
+                    ? streamError
+                    : "Menunggu URL dari Firebase"),
+            style: TextStyle(
+              color: streamUrl.isNotEmpty ? Colors.teal : Colors.grey[700],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CameraStreamPage extends StatelessWidget {
+  final String streamUrl;
+  const CameraStreamPage({super.key, required this.streamUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('ESP32-CAM Stream'),
+        backgroundColor: Colors.teal,
+      ),
+      body: Center(
+        child: Image.network(
+          streamUrl,
+          gaplessPlayback: true, // Keep MJPEG smooth when frames change
+          errorBuilder: (_, __, ___) => const Text('Stream tidak tersedia'),
+        ),
       ),
     );
   }
